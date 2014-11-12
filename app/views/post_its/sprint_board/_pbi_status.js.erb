@@ -1,0 +1,43 @@
+<%= javascript_tag do %>
+    $(document).ready(function() {
+        <%- roles = current_user.roles_for_project project -%>
+        var acceptSelectors = '<%= status.find_old_statuses_allowed_from(roles, tracker).map do |s|
+             ".issue-status-#{s.id}"
+        end.join ", " %>';
+
+        $("#<%= pbi_status_id %>").droppable({
+            accept: acceptSelectors,      //'.post-it', //".sprint-task",
+            drop: function(event, ui) {
+                if ($.isFunction($.fn.setupAjaxIndicator)) {
+                    setupAjaxIndicator();
+                }
+                if (!(ui.draggable.is($(this).children()))) {
+                    $.ajax({
+                        url: "<%= project_sprints_change_task_status_path(@project) %>",
+                        type: "POST",
+                        data: {task: encodeURIComponent($(ui.draggable).attr("id")),
+                                     status: encodeURIComponent("<%= status.id %>")},
+                        error: function() {
+                            alert("<%= l(:error_changing_task_status) %>");
+                        },
+                        complete: function() {
+                            if ($.isFunction($.fn.hideOnLoad)) {
+                                hideOnLoad();
+                            }
+                        },
+                        success: function() {
+                            var oldStatus = ui.draggable.data('issue-status'),
+                                newStatus = <%= status.id %>;
+                            ui.draggable.removeClass('issue-status-' + oldStatus)
+                              .addClass('issue-status-' + newStatus)
+                              .data('issue-status', newStatus);
+                            window["container_" + $(ui.draggable).attr("id")] = "";
+                        }
+                    });
+                }
+                ui.draggable.appendTo($(this)).removeAttr("style");
+                ui.draggable.attr("style", "position: relative; " + ui.draggable.attr("style"));
+            }
+        });
+    });
+<% end %>

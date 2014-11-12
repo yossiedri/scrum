@@ -1,0 +1,20 @@
+<%- if @project.module_enabled?(:scrum) -%>
+  <div class="splitcontent">
+    <div class="splitcontentleft">
+      <p>
+        <%- sprints = @issue.project.sprints_and_product_backlog
+            options = options_for_select(sprints.collect {|sprint| [sprint.name, sprint.id]},
+			                             :selected => @issue.sprint_id,
+										 :disabled => Sprint.all.select(&:is_locked).collect(&:id) ) -%>
+        <%= form.select :sprint_id, options, {:include_blank => true}, {:disabled => @issue.sprint.is_locked} %>
+      </p>
+    </div>
+    <%- if @issue.is_task? -%>
+      <div class="splitcontentright">
+        <p>
+          <%= form.text_field :pending_effort, :size => 3 %>
+        </p>
+      </div>
+    <%- end -%>
+  </div>
+<%- end -%>
