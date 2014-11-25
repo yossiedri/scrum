@@ -1,15 +1,19 @@
 <li class="folder">
   <a href="#" class="submenu">Sprint</a>
   <ul>
-	<% Sprint.all.each do |s| %>
+	<% sprints = @issues.collect(&:sprint)
+	   Sprint.where(project_id: @project.id)
+	     .reject {|s| s.is_locked && !sprints.include?(s) }
+	     .each do |s| %>
 	  <li><%= context_menu_link h(s.name),
 			  bulk_update_issues_path(
 			      :ids => @issue_ids,
 		          :issue => {:sprint_id => s},
 		          :back_url => @back),
 		      :method => :post,
-		      :selected => (@issue && s == @issue.sprint),
-		      :disabled => !@can[:update] || s.is_locked
+		      :selected => sprints.include?(s),
+		      :disabled => !@can[:update] ||
+		                   s.is_locked || sprints.any?(&:is_locked)
 		  %>
 	  </li>
 	<% end %>
