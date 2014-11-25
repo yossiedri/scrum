@@ -1,7 +1,9 @@
 <li class="folder">
   <a href="#" class="submenu">Sprint</a>
   <ul>
-	<% sprints = @issues.collect(&:sprint)
+	<% 
+	# Sprint.joins(:issues).where(project_id: @project.id,is_locked: false).uniq
+	sprints = @issues.collect(&:sprint)
 	   Sprint.where(project_id: @project.id)
 	     .reject {|s| s.is_locked && !sprints.include?(s) }
 	     .each do |s| %>
