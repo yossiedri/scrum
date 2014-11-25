@@ -1,6 +1,7 @@
 <%- if User.current.allowed_to?(:edit_sprint_board, project) and task.editable? -%>
 	<%= javascript_tag do %>
 		var task_context_menu_function = function(event) {
+			$("#sprint_board").sortable('disable');
 			$(".scrum-custom-menu").hide();
 			event.preventDefault();
 			var maxX = $(document).width() - $("#<%= context_menu_id %>").width() - 10;
@@ -17,6 +18,7 @@
 		$("#<%= task_id %>").contextmenu(task_context_menu_function);
 		$("#<%= close_context_menu_task_id %>").click(function(event) {
 			$(".scrum-custom-menu").hide();
+			$("#sprint_board").sortable('enable');
 		});
 		$("#<%= context_menu_assigned_to_id %>").change(function() {
 			$.ajax({
@@ -31,6 +33,7 @@
 				},
 				complete: function() {
 					$(".scrum-custom-menu").hide();
+					$("#sprint_board").sortable('enable');
 					if ($.isFunction($.fn.hideOnLoad)) {
 						hideOnLoad();
 					}
@@ -52,6 +55,7 @@
 				},
 				complete: function() {
 					$(".scrum-custom-menu").hide();
+					$("#sprint_board").sortable('enable');
 					if ($.isFunction($.fn.hideOnLoad)) {
 						hideOnLoad();
 					}

@@ -54,7 +54,7 @@ Redmine::Plugin.register :scrum do
                     {:product_backlog => [:burndown]}
   end
 
-  menu              :project_menu, :scrum, {:controller => "/sprints", :action => :index},
+  menu              :project_menu, :scrum, {:controller => "/sprints", :action => "index"},
                     :caption => :label_scrum, :after => :activity, :param => :project_id
 
   settings          :default => {:create_journal_on_pbi_position_change => "0",
