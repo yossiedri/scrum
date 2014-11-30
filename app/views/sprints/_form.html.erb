@@ -14,6 +14,9 @@
     <%= calendar_for "sprint_end_date" %>
   </p>
   <p>
+    <%= f.select :sharing, @sprint.allowed_sharings.collect {|sh| [format_sprint_sharing(sh), sh]} %>
+  </p>
+  <p>
 	<%= f.check_box :is_locked %>
   </p>
 </div>

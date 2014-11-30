@@ -1,5 +1,7 @@
 class Sprint < ActiveRecord::Base
 
+  SPRINT_SHARINGS = %w(none descendants hierarchy tree system)
+
   belongs_to :user
   belongs_to :project
   has_many :issues, :dependent => :destroy
@@ -13,6 +15,8 @@ class Sprint < ActiveRecord::Base
   validates_presence_of :start_date
 
   validates_presence_of :end_date
+
+  validates_inclusion_of :sharing, :in => SPRINT_SHARINGS
 
   before_destroy :update_project_product_backlog
 
@@ -138,6 +142,30 @@ class Sprint < ActiveRecord::Base
   end
 
   scope :sorted, order(fields_for_order_statement)
+
+  # Returns the sharings that +user+ can set the sprint to
+  # XXX This is nearly identical to the same method in the Version
+  # model, but it might be tricky to refactor it since this is a
+  # plugin and Version is part of core.
+  def allowed_sharings(user = User.current)
+    SPRINT_SHARINGS.select do |s|
+      if sharing == s
+        true
+      else
+        case s
+        when 'system'
+          # Only admin users can set a systemwide sharing
+          user.admin?
+        when 'hierarchy', 'tree'
+          # Only users allowed to manage versions of the root project can
+          # set sharing to hierarchy or tree
+          project.nil? || user.allowed_to?(:manage_sharings, project.root)
+        else
+          true
+        end
+      end
+    end
+  end
 
 private
 

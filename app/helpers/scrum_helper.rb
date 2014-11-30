@@ -21,4 +21,13 @@ module ScrumHelper
     end
   end
 
+  def format_sprint_sharing(sharing)
+	  sharing = 'none' unless Sprint::SPRINT_SHARINGS.include?(sharing)
+	  sharing
+	  # use the following line if you want to enable translation of
+	  # sprint sharing slugs (you'll also need to provide the
+	  # transations themselves)
+	  # l("label_sprint_sharing_#{sharing}")
+  end
+
 end
