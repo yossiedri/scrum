@@ -5,7 +5,7 @@
         <%# Sprint.joins(:issues).where("sprints.id <> #{@issue.sprint_id}").where(project_id: @project.id,is_locked: false) %>
         <%- sprints = @issue.project.shared_sprints
                           .reject {|s| s.is_locked && @issue.sprint != s}
-                          .collect {|s| [s.name, s.id]},
+                          .collect {|s| [s.name, s.id]}
             options = options_for_select(sprints,
                 :selected => @issue.sprint_id,
                 :disabled => Sprint.all.select(&:is_locked).collect(&:id)) -%>
