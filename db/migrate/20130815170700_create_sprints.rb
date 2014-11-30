@@ -1,14 +1,14 @@
 class CreateSprints < ActiveRecord::Migration
   def self.up
     create_table :sprints, :force => true do |t|
-      t.column :name,             :string,                            :null => false
-      t.column :description,      :text,        :default => ""
-      t.column :start_date,       :date,                              :null => false
-      t.column :end_date,         :date,                              :null => false
-      t.column :user_id,          :integer,                           :null => false
-      t.column :project_id,       :integer,                           :null => false
-      t.column :created_on,       :datetime
-      t.column :updated_on,       :datetime
+      t.column :name,        :string,  :null => false
+      t.column :description, :text
+      t.column :start_date,  :date,    :null => false
+      t.column :end_date,    :date,    :null => false
+      t.column :user_id,     :integer, :null => false
+      t.column :project_id,  :integer, :null => false
+      t.column :created_on,  :datetime
+      t.column :updated_on,  :datetime
     end
 
     add_index :sprints, [:name], :name => "sprints_name"
