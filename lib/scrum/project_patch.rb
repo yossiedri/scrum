@@ -12,7 +12,7 @@ module Scrum
                  :order => "start_date ASC, name ASC"
 
         def last_sprint
-          sprints.sort{|a, b| a.end_date <=> b.end_date}.last
+          shared_sprints.sort{|a, b| a.end_date <=> b.end_date}.last
         end
 
         # Returns a scope of the Sprints used by the project
