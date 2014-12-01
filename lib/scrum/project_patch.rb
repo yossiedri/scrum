@@ -30,7 +30,7 @@ module Scrum
                               " OR (#{Project.table_name}.status <> #{Project::STATUS_ARCHIVED} AND (" +
                               " #{Sprint.table_name}.sharing = 'system'" +
                               " OR (#{Project.table_name}.lft >= #{r.lft} AND #{Project.table_name}.rgt <= #{r.rgt} AND #{Sprint.table_name}.sharing = 'tree')" +
-                              " OR (#{Project.table_name}.lft < #{lft} AND #{Project.table_name}.rgt > #{rgt} AND #{Sprint.table_name}.sharing IN ('hierarchy', 'descendants'))" +
+                              " OR (#{Project.table_name}.lft < #{lft} AND #{Project.table_name}.rgt > #{rgt} AND #{Sprint.table_name}.sharing IN ('hierarchy', 'subprojects'))" +
                               " OR (#{Project.table_name}.lft > #{lft} AND #{Project.table_name}.rgt < #{rgt} AND #{Sprint.table_name}.sharing = 'hierarchy')" +
                               "))")
                 end

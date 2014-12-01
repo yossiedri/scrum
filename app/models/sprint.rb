@@ -1,6 +1,6 @@
 class Sprint < ActiveRecord::Base
 
-  SPRINT_SHARINGS = %w(none descendants hierarchy tree system)
+  SPRINT_SHARINGS = %w(none subprojects hierarchy tree system)
 
   belongs_to :user
   belongs_to :project
