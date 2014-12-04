@@ -14,7 +14,7 @@ module Scrum
         def initialize_available_filters_with_scrum
           filters = initialize_available_filters_without_scrum
           if project
-            sprints = project.sprints_and_product_backlog
+            sprints = project.shared_sprints
             if sprints.any?
               add_available_filter "sprint_id",
                                    :type => :list_optional,
