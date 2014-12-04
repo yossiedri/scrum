@@ -3,7 +3,7 @@
     <div class="splitcontentleft">
       <p>
         <%# Sprint.joins(:issues).where("sprints.id <> #{@issue.sprint_id}").where(project_id: @project.id,is_locked: false) %>
-        <%- sprints = @issue.project.shared_sprints
+        <%- sprints = @issue.project.shared_sprints_and_product_backlog
                           .reject {|s| s.is_locked && @issue.sprint != s}
                           .collect {|s| [s.name, s.id]}
             options = options_for_select(sprints,

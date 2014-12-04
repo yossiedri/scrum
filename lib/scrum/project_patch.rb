@@ -12,7 +12,24 @@ module Scrum
                  :order => "start_date ASC, name ASC"
 
         def last_sprint
-          shared_sprints.sort{|a, b| a.end_date <=> b.end_date}.last
+          shared_sprints_and_product_backlog.sort{|a, b| a.end_date <=> b.end_date}.last
+        end
+
+        def shared_product_backlog
+	        return product_backlog if product_backlog
+	        return @shared_product_backlog if @shared_product_backlog
+	        ancestor_project = self
+	        while ancestor_project = ancestor_project.parent do
+		        backlog = ancestor_project.product_backlog
+		        if backlog and backlog.sharing = 'subprojects'
+			        @shared_product_backlog = backlog
+			        return backlog
+		        end
+	        end
+        end
+
+        def has_shared_product_backlog?
+	        product_backlog.nil? && !shared_product_backlog.nil?
         end
 
         # Returns a scope of the Sprints used by the project
@@ -35,6 +52,14 @@ module Scrum
                               "))")
                 end
 	        end
+        end
+
+        # same as shared_sprints, plus the shared_product_backlog if there is
+        # one
+        def shared_sprints_and_product_backlog
+	        sprints = shared_sprints
+	        sprints << shared_product_backlog if has_shared_product_backlog?
+	        sprints
         end
 
       end
