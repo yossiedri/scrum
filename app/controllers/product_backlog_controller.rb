@@ -8,6 +8,7 @@ class ProductBacklogController < ApplicationController
   before_filter :find_product_backlog,
                 :only => [:index, :render_pbi, :sort, :new_pbi, :create_pbi, :burndown]
   before_filter :find_pbis, :only => [:index, :sort]
+  before_filter :redirect_if_shared_product_backlog, :only => [:index, :sort]
   before_filter :check_issue_positions, :only => [:index]
   before_filter :authorize
 
@@ -30,7 +31,7 @@ class ProductBacklogController < ApplicationController
     @pbi.project = @project
     @pbi.author = User.current
     @pbi.tracker = @project.trackers.find(params[:tracker_id])
-    @pbi.sprint = @product_backlog
+    @pbi.sprint = @shared_product_backlog
 
     respond_to do |format|
       format.html
@@ -44,7 +45,7 @@ class ProductBacklogController < ApplicationController
       @pbi = Issue.new(params[:issue])
       @pbi.project = @project
       @pbi.author = User.current
-      @pbi.sprint = @product_backlog
+      @pbi.sprint = @shared_product_backlog
       @pbi.save!
       @pbi.story_points = params[:issue][:story_points]
     rescue Exception => @exception
@@ -69,7 +70,14 @@ class ProductBacklogController < ApplicationController
       i -= 1
     end
     story_points_per_sprint = 1 if story_points_per_sprint == 0
-    pending_story_points = @project.product_backlog.story_points
+
+    # From here is the projection into the future.  Use
+    # product_backlog and not shared_product_backlog, because any
+    # shared_product_backlog would include issues from unrelated
+    # sibling and ancestor projects, which should not be projected
+    # into the time to complete the current project
+    pending_story_points = @project.product_backlog ?
+      @project.product_backlog.story_points : 0
     new_sprints = 1
     while pending_story_points > 0
       @data << {:axis_label => "#{l(:field_sprint)} +#{new_sprints}",
@@ -93,7 +101,7 @@ class ProductBacklogController < ApplicationController
 private
 
   def find_product_backlog
-    @product_backlog = @project.product_backlog
+    @product_backlog = @project.shared_product_backlog
     if @product_backlog.nil?
       render_error l(:error_no_product_backlog)
     end
@@ -102,13 +110,13 @@ private
   end
 
   def find_pbis
-    @pbis = @product_backlog.pbis
+    @pbis = @project.shared_product_backlog.pbis
   rescue
     render_404
   end
 
   def check_issue_positions
-    check_issue_position(Issue.find_all_by_sprint_id_and_position(@project.product_backlog, nil))
+    check_issue_position(Issue.find_all_by_sprint_id_and_position(@project.shared_product_backlog, nil))
   end
 
   def check_issue_position(issue)
@@ -126,5 +134,13 @@ private
       raise "Invalid type: #{issue.inspect}"
     end
   end
+
+  def redirect_if_shared_product_backlog
+      if !@project.product_backlog && @project.shared_product_backlog
+          ancestor_with_backlog = @project.shared_product_backlog.project
+          redirect_to project_product_backlog_index_path(ancestor_with_backlog)
+      end
+  end
+
 
 end

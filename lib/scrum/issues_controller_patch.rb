@@ -8,12 +8,22 @@ module Scrum
         after_filter :save_pending_effort, :only => [:create, :update]
         before_filter :add_default_sprint, :only => [:new, :update_form]
 
+        before_filter :redirect_if_wrong_project, :only => [:show]
+
+        # redirect to the correct project if we came from the
+        # shared backlog of an ancestor
+        def redirect_if_wrong_project
+            if @project.id.to_s != params[:project_id]
+                redirect_to project_issue_path(@issue.project.id, @issue)
+            end
+        end
+
         def sprint_locked
-	        sprint = @issue.sprint
-	        params_id = params[:issue][:sprint_id].to_i
-	        return false if params_id == sprint.id  # no change
-	        return true if sprint.is_locked
-	        Sprint.find(params_id).is_locked
+            sprint = @issue.sprint
+            params_id = params[:issue][:sprint_id].to_i
+            return false if params_id == sprint.id  # no change
+            return true if sprint.is_locked
+            Sprint.find(params_id).is_locked
         end
 
         update_issue_from_params_orig = instance_method(:update_issue_from_params)
@@ -34,8 +44,8 @@ module Scrum
           if @issue.is_task? and @project.last_sprint and not @issue.sprint
             @issue.sprint = @project.last_sprint
           end
-          if @issue.is_pbi? and @project.product_backlog and not @issue.sprint
-            @issue.sprint = @project.product_backlog
+          if @issue.is_pbi? and @project.shared_product_backlog and not @issue.sprint
+            @issue.sprint = @project.shared_product_backlog
           end
         end
 
