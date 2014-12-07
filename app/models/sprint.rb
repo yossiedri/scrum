@@ -1,6 +1,6 @@
 class Sprint < ActiveRecord::Base
 
-  SPRINT_SHARINGS = %w(none subprojects hierarchy tree system)
+  SPRINT_SHARINGS = %w(none subprojects hierarchy tree)
 
   belongs_to :user
   belongs_to :project
@@ -153,9 +153,6 @@ class Sprint < ActiveRecord::Base
         true
       else
         case s
-        when 'system'
-          # Only admin users can set a systemwide sharing
-          user.admin?
         when 'hierarchy', 'tree'
           # Only users allowed to manage versions of the root project can
           # set sharing to hierarchy or tree
