@@ -18,7 +18,7 @@ module Scrum
 
         update_issue_from_params_orig = instance_method(:update_issue_from_params)
         define_method(:update_issue_from_params) do
-	        return if sprint_locked
+	        return if @project.module_enabled?(:scrum) && sprint_locked
 	        update_issue_from_params_orig.bind(self).call
         end
 
