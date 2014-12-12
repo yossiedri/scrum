@@ -1,0 +1,67 @@
+<%= javascript_tag do %>
+!function ($) {
+
+var ctxMenu, backlogItems, moveUrl, pbiWidget;
+var itemSelector = '.sprint-pbi';
+
+function showSprintContextMenu(event) {
+  pbiWidget = $(event.target).parents(itemSelector);
+  moveUrl = pbiWidget.data('move-url');
+
+  var mouse_x = event.pageX;
+  var mouse_y = event.pageY;
+  var render_x = mouse_x;
+  var render_y = mouse_y;
+
+  event.preventDefault();
+
+  ctxMenu.css('left', (render_x + 'px'));
+  ctxMenu.css('top', (render_y + 'px'));
+  ctxMenu.css('position', 'absolute');
+  ctxMenu.show();
+}
+
+function documentClick(event) {
+  var target = $(event.target);
+  var isCtxMenu = !!target.parents('#context-menu').length;
+  if (isCtxMenu) {
+	  event.preventDefault();
+	  sprintContextMenuClick(target);
+	  return;
+  }
+
+  hideSprintContextMenu();
+}
+
+function hideSprintContextMenu(event) {
+  moveUrl = null;
+  ctxMenu.hide();
+}
+
+function movePbiToSprintSuccess() {
+  pbiWidget && pbiWidget.remove();
+  hideSprintContextMenu();
+}
+
+function sprintContextMenuClick(target) {
+	var sprintId = target.data('sprint-id'),
+	    data = {
+			sprint_id: sprintId
+		};
+
+	if (!sprintId) { return; }
+
+	$.post(moveUrl, data, movePbiToSprintSuccess);
+}
+
+$(function () {
+	ctxMenu = $('#context-menu');
+	backlogItems = $(itemSelector);
+
+	backlogItems.contextmenu(showSprintContextMenu);
+	$(document).click(documentClick);
+});
+
+
+}.call(this, jQuery);
+<% end %>

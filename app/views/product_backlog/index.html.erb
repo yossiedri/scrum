@@ -13,6 +13,15 @@
   <%- end -%>
 </ul>
 
+<div class="sprint-context-menu" id="context-menu" style="display: none">
+  <ul>
+    <% @project.shared_sprints
+         .reject {|s| s.is_locked || s.is_product_backlog}.each do |s| %>
+           <li><a href="#" data-sprint-id="<%= s.id %>"><%= s.name %></a></li>
+    <% end %>
+  </ul>
+</div>
+
 <%- if User.current.allowed_to?(:add_issues, @project) -%>
   <div>
     <%- Tracker.pbi_trackers.each do |tracker| -%>
@@ -26,5 +35,9 @@
   <%= render :partial => "post_its/product_backlog/pbis",
              :formats => [:js], :locals => {:project => @project} %>
 <%- end -%>
+
+<%= render :partial => "product_backlog/context_menu", :formats => [:js] %>
+
+<%= stylesheet_link_tag('context_menu') %>
 
 <%= render :partial => "common/scrum_footer" %>

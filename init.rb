@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require 'scrum/application_controller_patch'
 
 # This plugin should be reloaded in development mode.
@@ -46,7 +47,9 @@ Redmine::Plugin.register :scrum do
     permission      :view_product_backlog,
                     {:product_backlog => [:index]}
     permission      :edit_product_backlog,
-                    {:product_backlog => [:sort, :new_pbi, :create_pbi]},
+                    {:product_backlog => [:sort, :new_pbi,
+                                          :create_pbi,
+                                          :move_pbi_to_sprint]},
                     :require => :member
     permission      :view_product_backlog_burndown,
                     {:product_backlog => [:burndown]}
