@@ -22,7 +22,10 @@
   </tr>
   <tr>
     <td class="estimation">
-      <%= render_hours(task.estimated_hours, :title => l(:field_estimated_hours)) %>
+      <%# render_hours(task.estimated_hours, :title => l(:field_estimated_hours)) %>
+      <%= render :partial => "common/scrum_estimated_hours", :formats => [:html],
+                 :locals => {:project => project, :task => task} %>
+      <span title="<%= l(:field_pending_effort) %>">h</span>
     </td>
     <td class="spent">
       <%- if User.current.allowed_to?(:view_time_entries, project) -%>
