@@ -15,8 +15,7 @@
 
 <div class="sprint-context-menu" id="context-menu" style="display: none">
   <ul>
-    <% @project.shared_sprints
-         .reject {|s| s.is_locked || s.is_product_backlog}.each do |s| %>
+    <% @project.shared_sprints.reject(&:is_locked).each do |s| %>
            <li><a href="#" data-sprint-id="<%= s.id %>"><%= s.name %></a></li>
     <% end %>
   </ul>

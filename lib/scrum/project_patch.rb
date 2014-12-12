@@ -43,6 +43,7 @@ module Scrum
                     r = root? ? self : root
                     Sprint.
                         includes(:project).
+                        where(is_product_backlog: false).
                         where("#{Project.table_name}.id = #{id}" +
                               " OR (#{Project.table_name}.status <> #{Project::STATUS_ARCHIVED} AND (" +
                               " #{Sprint.table_name}.sharing = 'system'" +
