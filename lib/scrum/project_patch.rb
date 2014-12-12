@@ -59,7 +59,7 @@ module Scrum
         # one
         def shared_sprints_and_product_backlog
 	        sprints = shared_sprints
-	        sprints << shared_product_backlog if has_shared_product_backlog?
+	        sprints << shared_product_backlog
 	        sprints
         end
 
