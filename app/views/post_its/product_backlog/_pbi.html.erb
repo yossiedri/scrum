@@ -1,6 +1,6 @@
 <%- pbi_id = "pbi_#{pbi.id}" -%>
 
-<li id="<%= pbi_id %>"
+<li id="<%= pbi_id %>" data-pbi-id="<%= pbi.id %>" data-move-url="<%= project_move_pbi_to_sprint_url project.id, pbi.id %>"
     class="<%= pbi.post_it_css_class(:small_rotate => true, :small_scale => true, :draggable => true) %>">
   <table>
     <tr>

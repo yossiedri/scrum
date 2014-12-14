@@ -18,6 +18,10 @@ resources :projects do
        :controller => :sprints, :action => :change_task_status,
        :as => :sprints_change_task_status
 
+  post "issues/:issue_id/move_to_sprint",
+	   :controller => :product_backlog, :action => :move_pbi_to_sprint,
+	   :as => :move_pbi_to_sprint
+
   resources :product_backlog, :shallow => true, :only => [:index] do
     collection do
       post :sort
@@ -38,6 +42,9 @@ post "issues/:id/story_points",
 post "issues/:id/pending_effort",
      :controller => :scrum, :action => :change_pending_effort,
      :as => :change_pending_effort
+post "issues/:id/estimated_hours",
+     :controller => :scrum, :action => :change_estimated_hours,
+     :as => :change_estimated_hours
 post "issues/:id/assigned_to",
      :controller => :scrum, :action => :change_assigned_to,
      :as => :change_assigned_to
@@ -56,3 +63,4 @@ get "scrum/:pbi_id/new/:tracker_id",
 post "scrum/:pbi_id/create",
      :controller => :scrum, :action => :create_task,
      :as => :create_task
+

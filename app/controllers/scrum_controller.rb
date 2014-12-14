@@ -2,8 +2,11 @@ class ScrumController < ApplicationController
 
   menu_item :scrum
 
-  before_filter :find_issue, :only => [:change_story_points, :change_pending_effort,
-                                       :change_assigned_to, :create_time_entry]
+  before_filter :find_issue, :only => [:change_story_points,
+                                       :change_pending_effort,
+                                       :change_estimated_hours,
+                                       :change_assigned_to,
+                                       :create_time_entry]
   before_filter :find_sprint, :only => [:new_pbi, :create_pbi]
   before_filter :find_pbi, :only => [:new_task, :create_task]
   before_filter :authorize, :except => [:new_pbi, :create_pbi, :new_task, :create_task]
@@ -26,6 +29,12 @@ class ScrumController < ApplicationController
 
   def change_pending_effort
     @issue.pending_effort = params[:value]
+    render :nothing => true, :status => 200
+  end
+
+  def change_estimated_hours
+    @issue.estimated_hours = params[:value]
+    @issue.save!
     render :nothing => true, :status => 200
   end
 

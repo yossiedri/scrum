@@ -4,7 +4,8 @@ class ProductBacklogController < ApplicationController
   model_object Issue
 
   before_filter :find_project_by_project_id,
-                :only => [:index, :sort, :new_pbi, :create_pbi, :burndown]
+                :only => [:index, :sort, :new_pbi, :create_pbi, :burndown,
+                          :move_pbi_to_sprint]
   before_filter :find_product_backlog,
                 :only => [:index, :render_pbi, :sort, :new_pbi, :create_pbi, :burndown]
   before_filter :find_pbis, :only => [:index, :sort]
@@ -53,6 +54,14 @@ class ProductBacklogController < ApplicationController
     respond_to do |format|
       format.js
     end
+  end
+
+  def move_pbi_to_sprint
+    issue = Issue.find params[:issue_id]
+    sprint = Sprint.find params[:sprint_id]
+    issue.sprint = sprint
+    issue.save!
+    render :nothing => true
   end
 
   def burndown
@@ -141,6 +150,5 @@ private
           redirect_to project_product_backlog_index_path(ancestor_with_backlog)
       end
   end
-
 
 end
