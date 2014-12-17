@@ -1,0 +1,35 @@
+$(function() {
+	<% url = sort_sprint_path(sprint) %>
+	var getData = function () {
+		return $.map($("#sprint_board").sortable("toArray"), function (id) {
+			return +id.match(/pbi_(\d+)_row/)[1];
+		});
+	};
+	$("#sprint_board").sortable({
+		axis: 'y',
+		items: 'tr.sprint-board[id]',
+		cancel: '.ui-draggable',
+		update: function() {
+			if ($.isFunction($.fn.setupAjaxIndicator)) {
+				setupAjaxIndicator();
+			}
+			$.ajax({
+				url: "<%= url %>",
+				type: "POST",
+				data: $.param({
+					pbi_order: getData().join(','),
+					project_id: <%= sprint.project.id %>
+				}),
+				dataType: "script",
+				error: function() {
+					alert("<%= l(:error_changing_task_status) %>");
+				},
+				complete: function() {
+					if ($.isFunction($.fn.hideOnLoad)) {
+						hideOnLoad();
+					}
+				}
+			});
+		}
+	});
+});

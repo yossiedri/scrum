@@ -1,0 +1,8 @@
+<%= render :partial => "common/scrum_editable_value",
+           :locals => {:project => project,
+                       :title => l(:field_estimated_hours),
+                       :element_id => "estimated_hours_#{task.id}",
+                       :value => task.estimated_hours,
+                       :editable => (User.current.allowed_to?(:edit_sprint_board, project) and
+                                     task.editable?),
+                       :change_element_path => change_estimated_hours_path(task)} %>

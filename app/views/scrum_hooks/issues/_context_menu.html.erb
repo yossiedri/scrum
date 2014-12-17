@@ -1,0 +1,22 @@
+<li class="folder">
+	<a href="#" class="submenu">Sprint</a>
+	<ul>
+		<%# Sprint.joins(:issues).where(project_id: @project.id,is_locked: false).uniq %>
+		<% 
+		current_sprints = @issues.collect(&:sprint).reject(&:blank?).uniq #@issues.collect(&:sprint).uniq
+		relevant_sprints = @issues.collect(&:project).uniq.collect(&:shared_sprints_and_product_backlog).flatten.uniq.reject {|s| s.is_locked && !current_sprints.include?(s) }
+
+		unless relevant_sprints.blank?
+			relevant_sprints.each do |s| %>
+				<li>
+					<%= context_menu_link h(s.name),
+					bulk_update_issues_path(:ids => @issue_ids,:issue => {:sprint_id => s},:back_url => @back),:method => :post,:selected => current_sprints.include?(s), 
+					:disabled => !@can[:update] || s.is_locked || current_sprints.any?(&:is_locked)
+					%>
+				</li>
+			<% end %>	
+		<% else %>
+			<li>NA</li>
+		<% end %>
+	</ul>
+</li>
